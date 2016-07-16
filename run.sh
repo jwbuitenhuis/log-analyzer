@@ -4,7 +4,10 @@
 # could add a check on the file size/date - only retrieve if different from the local one
 # better, use rsync
 #
-SSH_HOST='user@server.com'
+#
+# USAGE: ./run.sh user@server.com
+
+SSH_HOST=$1
 LOG_PATH='/var/www/logs'
 LOG_FILE='access.log'
 
