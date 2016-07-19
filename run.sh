@@ -7,12 +7,14 @@
 #
 # USAGE: ./run.sh user@server.com
 
-SSH_HOST=$1
-LOG_PATH='/var/www/logs'
-LOG_FILE='access.log'
+export SSH_HOST=$1
+export LOG_PATH='/var/www/logs'
+export LOG_FILE='access.log'
 
 echo "Backing up older logs..."
-ssh $SSH_HOST stat -f "%m%N" $LOG_PATH/* | ./perl/fetch-log.pl $SSH_HOST $LOG_PATH $LOG_FILE
+echo "SSH_HOST " $SSH_HOST
+
+ssh $SSH_HOST stat -f "%m%N" $LOG_PATH/* | ./perl/fetch-log.pl
 
 echo "Downloading today's log"
 scp $SSH_HOST:$LOG_PATH/$LOG_FILE ./logs/

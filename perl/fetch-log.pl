@@ -3,9 +3,6 @@
 use strict;
 use POSIX 'strftime';
 
-my ($SSH_HOST, $LOG_PATH, $LOG_FILE) = @ARGV;
-print STDERR $SSH_HOST . $LOG_PATH . $LOG_FILE;
-exit;
 my @result =
 	grep { $_ }  # filter the entries where something happened
 	map { processLine($_) }
@@ -51,7 +48,7 @@ sub logPresent {
 sub fetchLog {
 	my ($filename, $localName) = @_;
 
-	print STDERR "fetching " . $localName . "\n";
-	my $command = 'scp ' . $SSH_HOST . ':' . $LOG_PATH . '/' . $LOG_FILE . ' ./logs/' . $localName;
+	#print STDERR "fetching " . $localName . "\n";
+	my $command = 'scp ' . $ENV{SSH_HOST} . ':' . $ENV{LOG_PATH} . '/' . $ENV{LOG_FILE} . ' ./logs/' . $localName;
 	system($command);
 }
