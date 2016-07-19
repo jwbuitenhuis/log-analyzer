@@ -1,3 +1,5 @@
+# Java app to parse Apache access logs
+
 Open a terminal.
 Use "cd" command to navigate to this directory.
 
@@ -6,17 +8,17 @@ Type the following command:
 ./run.sh
 
 
-# to generate a key
+### generate a key
 ssh-keygen -t rsa
 
 
-# profile script:
+### profile script:
 ```
 #!/bin/sh
 cd ~/log-archiver/ && ./run.sh username@server.com
 chmod 775 .bin/serverlogs
 ```
 
-# add to ~/.bash_profile:
+### add to ~/.bash_profile:
 export PATH=$PATH:~/.bin/
 
