@@ -32,6 +32,7 @@ public class Session implements Comparable<Session> {
 		System.out.println("Session from " + sessionStart() + " to " + sessionEnd());
 		System.out.println("");
 
+		formatPageViews();
 		System.out.println("");
 
 		requests.stream()
@@ -41,6 +42,9 @@ public class Session implements Comparable<Session> {
 		System.out.println("");
 	}
 
+	/* measure the time between route events or the last route event
+	 * and the end of the session 
+	 */
 	private void formatPageViews() {
 		List<Request> pageViews = requests.stream()
 			.filter(Request::isRouteView)
@@ -51,12 +55,12 @@ public class Session implements Comparable<Session> {
 		ZonedDateTime previous = startTime;
 		Request previousRequest = null;
 		for(Request request: pageViews) {
-//			if (previousRequest != null) {
+			if (previousRequest != null) {
 				ZonedDateTime current = request.getTimestamp();
 				Duration duration = Duration.between(previous,  current);
-				System.out.println(request.toString() + " (Spent: " + formatDuration(duration) + ")");
+				System.out.format("%-40s:%20s\n", previousRequest.toString(), "spent " + formatDuration(duration));
 				previous = current;
-//			}
+			}
 			previousRequest = request;
 		}
 	}
