@@ -12,8 +12,6 @@ export LOG_PATH='/var/www/logs'
 export LOG_FILE='access.log'
 
 echo "Backing up older logs..."
-echo "SSH_HOST " $SSH_HOST
-
 ssh $SSH_HOST stat -f "%m%N" $LOG_PATH/* | ./perl/fetch-log.pl
 
 echo "Downloading today's log"
