@@ -14,7 +14,7 @@ public class Request {
         DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
 
 	static DateTimeFormatter timeFormatter =
-		DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM);
+		DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.of("Europe/London"));
 
 	static DateTimeFormatter dateFormatter =
 		DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
