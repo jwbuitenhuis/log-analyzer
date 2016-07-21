@@ -123,7 +123,9 @@ public class Request {
 		
 		int beginIndex = request.indexOf(ROUTE_VIEW) + ROUTE_VIEW.length();
 		int endIndex = request.indexOf(" ", beginIndex);
-		return "Page view: " + request.substring(beginIndex, endIndex).replace('_', ' ');
+		String current = request.substring(beginIndex, endIndex).replace('_', ' ');
+		String formatted = current.equals("/") ? "Single Review" : current;
+		return "Page view: " + formatted;
 	}
 
 	private String formatRequest() {
