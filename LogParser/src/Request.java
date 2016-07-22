@@ -50,9 +50,13 @@ public class Request {
 	public boolean isRouteView() {
 		return request.indexOf("Route-view") != -1;
 	}
+	
+	public boolean isMouseMove() {
+		return request.indexOf("mousemove") != -1;
+	}
 
 	public boolean shouldReport() {
-		return (isTracking() && !isKeepAlive()) || isImage();		
+		return (isTracking() && !isKeepAlive() && !isMouseMove()) || isImage();		
 	}
 
 	public boolean isImage() {
@@ -124,7 +128,7 @@ public class Request {
 		int beginIndex = request.indexOf(ROUTE_VIEW) + ROUTE_VIEW.length();
 		int endIndex = request.indexOf(" ", beginIndex);
 		String current = request.substring(beginIndex, endIndex).replace('_', ' ');
-		String formatted = current.equals("/") ? "Single Review" : current;
+		String formatted = current.equals("/") ? "/Single Review" : current;
 		return "Page view: " + formatted;
 	}
 
