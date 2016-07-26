@@ -9,6 +9,7 @@ public class Request {
 	String request;
 	String status;
 	String browserString;
+	String rawRequest;
 
 	static DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
@@ -21,6 +22,7 @@ public class Request {
 
 		// 162.158.99.162 - - [05/Jun/2016:05:46:10 +0200] "GET /administrator/index.php HTTP/1.1" 404 162 "-" "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0"
 	public Request(String request) {
+		rawRequest = request;
 		List<String> parts = parse(request);
 		ip = parts.get(0);
 		//
@@ -37,10 +39,14 @@ public class Request {
 		try {
 			return java.net.URLDecoder.decode(request, "UTF-8");
 		} catch(Exception e) {
-			System.err.println(e.getMessage() + " in: " + request);
+			//System.err.println(e.getMessage() + " in: " + request);
 			//e.printStackTrace();
 		}
 		return "ERROR - UNABLE TO DECODE REQUEST";
+	}
+	
+	public String getIp() {
+		return ip;
 	}
 	
 	public ZonedDateTime getTimestamp() {
@@ -71,7 +77,7 @@ public class Request {
 		return request.indexOf("keep-alive") != -1;
 	}
 	
-	public boolean isValid() {
+	public boolean isLoggedIn() {
 		return !userName.equals("-") &&
 			!userName.equals("admin") &&
 			status.equals("200");
@@ -86,11 +92,11 @@ public class Request {
 		// get rid of [, ]
 		String cleaned = timeStamp.replace("[", "").replace("]", "");
 
-		ZonedDateTime date = ZonedDateTime.now(); // if parsing fails we need something
+		ZonedDateTime date = null;
 		try {
 			date = ZonedDateTime.parse(cleaned, formatter);
 		} catch(DateTimeParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return date;
 	}
@@ -131,8 +137,18 @@ public class Request {
 		String formatted = current.equals("/") ? "/Single Review" : current;
 		return "Page view: " + formatted;
 	}
+	
+	public boolean isWebsiteRequest() {
+		return browserString.toLowerCase().indexOf("googlebot") == -1 &&
+				request.indexOf("GET / ") != -1;
+	}
+	
+	public boolean isRequestMatching(String match) {
+		System.out.println("request: " + request + ", match: " + match);
+		return request.indexOf(match) != -1;
+	}
 
-	private String formatRequest() {
+	public String formatRequest() {
 		if (isTracking()) {
 			if (isRouteView()) {
 				return formatRouteView();
@@ -154,7 +170,6 @@ public class Request {
 	}
 
 	public String toString() {
-		
 		return formatTime() + " - " + formatRequest();
 	}
 }

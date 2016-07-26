@@ -7,6 +7,7 @@
 #
 # USAGE: ./run.sh user@server.com
 
+# IF shell script - process-only, don't get new files from server
 export SSH_HOST=$1
 export LOG_PATH='/var/www/logs'
 export LOG_FILE='access.log'
