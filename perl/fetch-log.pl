@@ -2,6 +2,7 @@
 
 use strict;
 use POSIX 'strftime';
+use Cwd;
 
 my @result =
 	grep { $_ }  # filter the entries where something happened
@@ -24,12 +25,14 @@ sub processLine {
 	#print STDERR "date: ". $ymd . ", path: " . $path . ", filename: " . $filename . ', logType: ' . $logType . "\n";
 
 	my $localName = $ymd . '.' . $logType . '.gz';
+
 	if (!logPresent($localName)) {
-		#print STDERR "not present $filename, $localName\n";
 		fetchLog($filename, $localName);
 
 		# notify the caller that we had to fetch
 		return 1; 
+	} else {
+		print STDERR "log $filename already present locally\n";
 	}
 }
 
@@ -48,7 +51,8 @@ sub logPresent {
 sub fetchLog {
 	my ($filename, $localName) = @_;
 
-	#print STDERR "fetching " . $localName . "\n";
-	my $command = 'scp ' . $ENV{SSH_HOST} . ':' . $ENV{LOG_PATH} . '/' . $ENV{LOG_FILE} . ' ./logs/' . $localName;
+    my $dir = getcwd;
+
+	my $command = 'scp ' . $ENV{SSH_HOST} . ':' . $ENV{LOG_PATH} . '/' . $filename . ' ' . $dir . '/logs/' . $localName;
 	system($command);
 }
