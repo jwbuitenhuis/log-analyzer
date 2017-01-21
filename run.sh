@@ -11,6 +11,7 @@
 export SSH_HOST=$1
 export LOG_PATH='/var/www/logs'
 export LOG_FILE='access.log'
+export FROM_DATE=$2
 
 echo "Backing up older logs..."
 ssh $SSH_HOST stat -f "%m%N" $LOG_PATH/* | ./perl/fetch-log.pl
@@ -19,4 +20,10 @@ echo "Downloading today's log"
 scp $SSH_HOST:$LOG_PATH/$LOG_FILE ./logs/
 
 cd ./LogParser/bin
-java LogParser ../../logs/$LOG_FILE
+
+if [ "$FROM_DATE" != "" ]; then
+	java LogParser ../../logs/ $FROM_DATE
+else
+	java LogParser ../../logs/$LOG_FILE
+fi
+

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -53,15 +54,51 @@ public class LogParser {
 		return requests;
 	}
 
+	private static void processLogFile(String filename) {
+		System.out.println("Processing: " + filename);
+		System.out.println("-------------------------------------------");
+System.out.println(filename);
+		try {
+		List<Request> requests = getRequests(filename);
+		reportLoggedIn(requests);
+		} catch (IOException e) {
+			System.out.println("error: " + e.getMessage());
+		}
+	}
+	
+	private static boolean afterDate(String filename, String date) {
+		String extracted = ParseLogFilename.extractDate(filename);
+
+		if (extracted.equals("access")) {
+			return true;
+		}
+
+		LocalDate parsed = LocalDate.parse(extracted);
+		LocalDate threshold = LocalDate.parse(date);
+		
+		return parsed.isAfter(threshold);
+	}
+
+	private static void findLogFilesIncluding(String directory, String date)
+			throws IOException {
+		
+		Files.list(Paths.get(directory))
+			.map(path -> path.toAbsolutePath().toString())
+			.filter(filename -> filename.indexOf("access.log") != -1)
+			.filter(filename -> afterDate(filename, date))
+			.forEach(filename -> processLogFile(filename));
+	}
+
 	public static void main(String[] argv) throws IOException {
 		if (argv.length < 1) {
 			System.out.println("ERROR: Provide access log filename");
 			return;
 		}
 		
-		List<Request> requests = getRequests(argv[0]);
-
-		reportLoggedIn(requests);
-		//reportWebsiteRequests(requests);
+		if (argv.length == 2) {
+			findLogFilesIncluding(argv[0], argv[1]);
+		} else {
+			processLogFile(argv[0]);
+		}
 	}
 }

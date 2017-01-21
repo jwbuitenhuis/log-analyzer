@@ -24,10 +24,10 @@ sub processLine {
 	my ($logType) = $filename =~ m|(.*)\.\d+\.gz$|is;
 	#print STDERR "date: ". $ymd . ", path: " . $path . ", filename: " . $filename . ', logType: ' . $logType . "\n";
 
-	my $localName = $ymd . '.' . $logType . '.gz';
+	my $localName = $ymd . '.' . $logType;# . '.gz';
 
 	if (!logPresent($localName)) {
-		fetchLog($filename, $localName);
+		fetchLog($filename, $localName, '.gz');
 
 		# notify the caller that we had to fetch
 		return 1; 
@@ -49,10 +49,14 @@ sub logPresent {
 }
 
 sub fetchLog {
-	my ($filename, $localName) = @_;
+	my ($filename, $localName, $extension) = @_;
 
     my $dir = getcwd;
 
-	my $command = 'scp ' . $ENV{SSH_HOST} . ':' . $ENV{LOG_PATH} . '/' . $filename . ' ' . $dir . '/logs/' . $localName;
+    my $zipFilename = $dir . '/logs/' . $localName . $extension;
+	my $command = 'scp ' . $ENV{SSH_HOST} . ':' . $ENV{LOG_PATH} . '/' . $filename . ' ' . $dir . '/logs/' . $localName . $extension;
 	system($command);
+
+	my $unzipCommand = 'gunzip ' . $zipFilename;
+	system($unzipCommand);
 }
