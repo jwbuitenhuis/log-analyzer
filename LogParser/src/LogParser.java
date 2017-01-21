@@ -55,9 +55,6 @@ public class LogParser {
 	}
 
 	private static void processLogFile(String filename) {
-		System.out.println("Processing: " + filename);
-		System.out.println("-------------------------------------------");
-System.out.println(filename);
 		try {
 		List<Request> requests = getRequests(filename);
 		reportLoggedIn(requests);
@@ -100,5 +97,7 @@ System.out.println(filename);
 		} else {
 			processLogFile(argv[0]);
 		}
+		
+		System.out.println("-> For older logs, type e.g. 'serverlogs 2016-12-23'");
 	}
 }
