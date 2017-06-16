@@ -10,6 +10,7 @@ public class Request {
 	String status;
 	String browserString;
 	String rawRequest;
+	String encoded;
 
 	static DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
@@ -28,6 +29,7 @@ public class Request {
 		//
 		userName = parts.get(2);
 		timeStamp = parseTimeStamp(parts.get(3));
+		encoded = parts.get(4);
 		this.request = decodeUrl(parts.get(4));
 		status = parts.get(5);
 		// length?
@@ -57,6 +59,19 @@ public class Request {
 		return request.indexOf("Route-view") != -1;
 	}
 	
+	static String IFRAME_CLICK = "send-event-IFrameClick-view-";
+	private boolean isYoutubeView() {
+		return request.indexOf(IFRAME_CLICK) != -1 &&
+				request.toLowerCase().indexOf("youtube") != -1;
+	}
+
+	private String formatYoutubeView() {
+		int beginIndex = encoded.indexOf(IFRAME_CLICK) + IFRAME_CLICK.length();
+		int endIndex = encoded.indexOf(" ", beginIndex);
+		String current = decodeUrl(encoded.substring(beginIndex, endIndex)).replace('_', ' ');
+		return "YouTube View: " + current;
+	}
+
 	public boolean isMouseMove() {
 		return request.indexOf("mousemove") != -1;
 	}
@@ -152,10 +167,12 @@ public class Request {
 		if (isTracking()) {
 			if (isRouteView()) {
 				return formatRouteView();
+			} else if (isYoutubeView()) {
+				return formatYoutubeView();
 			} else {
-				int beginIndex = request.indexOf("_");
-				int endIndex = request.indexOf(" ", beginIndex);
-				return request.substring(beginIndex + 1, endIndex).replace('_', ' ');
+				int beginIndex = encoded.indexOf("_");
+				int endIndex = encoded.indexOf(" ", beginIndex);
+				return decodeUrl(encoded.substring(beginIndex + 1, endIndex)).replace('_', ' ');
 			}
 		}
 		return request;
