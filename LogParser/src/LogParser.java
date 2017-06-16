@@ -11,7 +11,7 @@ public class LogParser {
 
 	private static void reportLoggedIn(List<Request> requests) {
 		Map<String, List<Request>> sessions = requests.stream()
-				//.filter(Request::isLoggedIn)
+				 .filter(Request::isLoggedIn)
 				// .peek(System.out::println)
 				.collect(Collectors.groupingBy(Request::getUserName));
 
